@@ -2,61 +2,62 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nexus AI | 3D Elite</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus AI | 3D Elite Universe</title>
     <style>
-        body, html { margin: 0; padding: 0; background: #000; color: #fff; font-family: 'Poppins', sans-serif; overflow: hidden; }
-        #canvas-container { position: fixed; top: 0; left: 0; z-index: 1; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Poppins', sans-serif; }
+        #canvas-container { position: fixed; top: 0; left: 0; z-index: 1; transition: 1s ease-in-out; }
         
-        /* Smooth Content Overlay */
-        .content {
-            position: relative; z-index: 10; height: 100vh;
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; text-align: center;
-            background: radial-gradient(circle, transparent 20%, #000 150%);
-        }
+        /* Login UI */
+        .ui-layer { position: relative; z-index: 10; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white; transition: 1s; }
+        h1 { font-size: 8vw; letter-spacing: 15px; margin: 0; font-weight: 900; }
+        .glass-ui { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); padding: 40px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); margin-top: 30px; }
+        .btn-init { background: #00d2ff; border: none; padding: 15px 40px; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 0 20px #00d2ff; }
 
-        h1 { font-size: 8vw; letter-spacing: 15px; margin: 0; text-transform: uppercase; font-weight: 900; opacity: 0.8; }
-        p { font-size: 1.5vw; letter-spacing: 5px; color: #00d2ff; }
-
-        .glass-ui {
-            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px);
-            padding: 40px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1);
-            margin-top: 30px; transition: 0.5s;
-        }
-        .glass-ui:hover { border-color: #00d2ff; transform: scale(1.02); }
+        /* 3D Scene Viewer - Hidden initially */
+        #scene-viewer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; display: none; opacity: 0; transition: 2s; }
+        
+        /* Floating Portfolio Card */
+        .portfolio-card { position: fixed; bottom: 50px; right: 50px; z-index: 20; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); padding: 30px; border-radius: 20px; border: 1px solid #00d2ff; width: 350px; display: none; color: white; }
     </style>
 </head>
 <body>
     <div id="canvas-container"></div>
 
-    <div class="content">
+    <div class="ui-layer" id="login-screen">
         <h1>NEXUS AI</h1>
-        <p>3D AUTONOMOUS INTERFACE</p>
-        
+        <p style="letter-spacing: 5px; color: #00d2ff;">3D AUTONOMOUS INTERFACE</p>
         <div class="glass-ui">
-            <input type="text" id="userName" placeholder="IDENTITY NAME" style="background:transparent; border:none; border-bottom: 2px solid #333; color:#fff; padding:10px; width:250px; outline:none; text-align:center;">
-            <br><br>
-            <button onclick="alert('Access Granted')" style="background:#00d2ff; border:none; padding:15px 40px; border-radius:50px; font-weight:bold; cursor:pointer;">INITIALIZE</button>
+            <input type="text" id="pName" placeholder="IDENTIFY YOURSELF" style="background:transparent; border:none; border-bottom: 2px solid #333; color:#fff; padding:10px; width:250px; outline:none; text-align:center; margin-bottom: 20px;"><br>
+            <button class="btn-init" onclick="enterWorld()">INITIALIZE</button>
         </div>
+    </div>
+
+    <div id="scene-viewer">
+        <script type="module" src="https://unpkg.com/@splinetool/viewer@1.0.28/build/spline-viewer.js"></script>
+        <spline-viewer url="https://prod.spline.design/6Wq1Q7YAnWfEL7uH/scene.splinecode"></spline-viewer>
+    </div>
+
+    <div class="portfolio-card" id="final-card">
+        <h2 id="vName" style="color:#00d2ff; margin:0;"></h2>
+        <p>SYSTEM ACCESS GRANTED</p>
+        <div style="height:2px; background:#333; margin:15px 0;"></div>
+        <p style="font-size:12px; opacity:0.7;">CORE DEVELOPER INTERFACE ACTIVE</p>
+        <p style="font-size:10px; color:#00d2ff;">[ ENCRYPTION: CJITS-R22 ]</p>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // Three.js Scene Setup for that "Sébastien" vibe
+        // 1. Setup Initial 3D Background (The Torus)
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
-        const material = new THREE.MeshPhongMaterial({ color: 0x00d2ff, wireframe: true });
-        const torus = new THREE.Mesh(geometry, material);
+        const torus = new THREE.Mesh(new THREE.TorusGeometry(10, 3, 16, 100), new THREE.MeshPhongMaterial({ color: 0x00d2ff, wireframe: true }));
         scene.add(torus);
-
-        const light = new THREE.PointLight(0xffffff);
-        light.position.set(5, 5, 5);
-        scene.add(light);
+        scene.add(new THREE.PointLight(0xffffff, 1, 100));
         camera.position.z = 30;
 
         function animate() {
@@ -66,6 +67,37 @@
             renderer.render(scene, camera);
         }
         animate();
+
+        // 2. Transition Logic
+        function enterWorld() {
+            const name = document.getElementById('pName').value;
+            if(!name) return alert("Identify Yourself!");
+
+            // Zoom out the torus and fade UI
+            document.getElementById('login-screen').style.opacity = '0';
+            let zoom = setInterval(() => {
+                if(camera.position.z > 5) camera.position.z -= 0.5;
+                else {
+                    clearInterval(zoom);
+                    show3DWorld(name);
+                }
+            }, 10);
+        }
+
+        function show3DWorld(name) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('canvas-container').style.opacity = '0';
+            
+            // Show the Spline Scene (The Boy)
+            const world = document.getElementById('scene-viewer');
+            world.style.display = 'block';
+            setTimeout(() => { world.style.opacity = '1'; }, 100);
+
+            // Show Final Card
+            document.getElementById('vName').innerText = name.toUpperCase();
+            setTimeout(() => { document.getElementById('final-card').style.display = 'block'; }, 2000);
+        }
     </script>
 </body>
 </html>
+
